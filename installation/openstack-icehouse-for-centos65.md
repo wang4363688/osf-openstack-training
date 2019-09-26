@@ -1,11 +1,11 @@
-#OpenStack 手动安装手册（Icehouse）
+# OpenStack 手动安装手册（Icehouse）
 
 声明：本博客欢迎转发，但请保留原作者信息!      
 作者：[罗勇] 云计算工程师、敏捷开发实践者    
 博客：[http://yongluo2013.github.io/](http://yongluo2013.github.io/)    
 微博：[http://weibo.com/u/1704250760/](http://weibo.com/u/1704250760/)  
 
-##部署架构
+## 部署架构
 
 为了更好的展现OpenStack各组件分布式部署的特点，以及逻辑网络配置的区别，本实验不采用All in One 的部署模式，而是采用多节点分开部署的方式，方便后续学习研究。
 
@@ -15,14 +15,14 @@
 
 ![networking](/installation/images/networking.png)
 
-##环境准备
+## 环境准备
 
 本实验采用Virtualbox Windows 版作为虚拟化平台，模拟相应的物理网络和物理服务器，如果需要部署到真实的物理环境，此步骤可以直接替换为在物理机上相应的配置，其原理相同。
 
 
 Virtualbox 下载地址：https://www.virtualbox.org/wiki/Downloads
 
-###虚拟网络
+### 虚拟网络
 
 需要新建3个虚拟网络Net0、Net1和Net2，其在virtual box 中对应配置如下。
 
@@ -47,7 +47,7 @@ Virtualbox 下载地址：https://www.virtualbox.org/wiki/Downloads
 		IP block: 192.168.4.0/24
 		Linux device: eth2
 
-###虚拟机
+### 虚拟机
 
 需要新建3个虚拟机VM0、VM1和VM2，其对应配置如下。
 
@@ -73,7 +73,7 @@ Virtualbox 下载地址：https://www.virtualbox.org/wiki/Downloads
 		Networks:net1,net3
 
 
-###网络设置
+### 网络设置
 
 	controller0 
 	     eth0:10.20.0.10   (management network)
@@ -95,7 +95,7 @@ Virtualbox 下载地址：https://www.virtualbox.org/wiki/Downloads
 	     eht1:(disabled)
 	     eht2:192.168.4.31  (private network)
 
-###操作系统准备
+### 操作系统准备
 
 本实验使用Linux 发行版 CentOS 6.5 x86_64，在安装操作系统过程中，选择的初始安装包为“基本”安装包，安装完成系统以后还需要额外配置如下YUM 仓库。
 
@@ -114,7 +114,7 @@ RDO源:  https://repos.fedorapeople.org/repos/openstack/EOL/openstack-icehouse/
 
 接下来可以开始安装配置啦！
 
-###公共配置（all nodes）
+### 公共配置（all nodes）
 
 以下命令需要在每一个节点都执行。
 
@@ -176,7 +176,7 @@ RDO源:  https://repos.fedorapeople.org/repos/openstack/EOL/openstack-icehouse/
 	yum install -y openstack-utils
 
 
-###基本服务安装与配置（controller0 node）
+### 基本服务安装与配置（controller0 node）
 
 基本服务包括NTP 服务、MySQL数据库服务和AMQP服务，本实例采用MySQL 和Qpid 作为这两个服务的实现。
 
@@ -229,7 +229,7 @@ Qpid 安装消息服务，设置客户端不需要验证使用服务
 	chkconfig qpidd on
 
 
-##控制节点安装（controller0）
+## 控制节点安装（controller0）
 
 主机名设置
 
@@ -254,7 +254,7 @@ Qpid 安装消息服务，设置客户端不需要验证使用服务
 	serice network restart
 
 
-###Keyston 安装与配置
+### Keyston 安装与配置
 
 安装keystone 包
 
@@ -465,7 +465,7 @@ Keystone 安装结束。
 如果显示相应的image 信息说明安装成功。
 
 
-###Nova 安装与配置
+### Nova 安装与配置
 
 	yum install -y openstack-nova-api openstack-nova-cert openstack-nova-conductor \
 	openstack-nova-console openstack-nova-novncproxy openstack-nova-scheduler python-novaclient
@@ -569,7 +569,7 @@ keystone 注册endpoint
 	nova      7352  7240  0 23:11 ?        00:00:00 /usr/bin/python /usr/bin/nova-api --logfile /var/log/nova/api.log
 
 
-###Neutron server安装与配置
+### Neutron server安装与配置
 
 安装Neutron server 相关包
 
@@ -668,7 +668,7 @@ keystone 注册endpoint
 	service neutron-server start
 	chkconfig neutron-server on
 	
-##网路节点安装（network0 node）
+## 网路节点安装（network0 node）
 
 主机名设置
 
@@ -1000,7 +1000,7 @@ keystone 注册endpoint
 	| 76f2069f-ba84-4c36-bfc0-3c129d49cbb1 | Metadata agent     | network0 | :-)   | True           |
 	+--------------------------------------+--------------------+----------+-------+----------------+
 
-##创建初始网络
+## 创建初始网络
 
 创建外部网络
 
@@ -1081,9 +1081,9 @@ nova boot --flavor m1.tiny --image $(nova image-list|awk '/ CirrOS / { print $2 
 	http://10.20.0.10/dashboard
 
 
-##Cinder 安装
+## Cinder 安装
 
-###Cinder controller 安装
+### Cinder controller 安装
 
 先在controller0 节点安装 cinder api
 
@@ -1159,7 +1159,7 @@ nova boot --flavor m1.tiny --image $(nova image-list|awk '/ CirrOS / { print $2 
 	chkconfig openstack-cinder-api on
 	chkconfig openstack-cinder-scheduler on
 
-###Cinder block storage 节点安装
+### Cinder block storage 节点安装
 
 执行下面的操作之前，当然别忘了需要安装公共部分内容!(比如ntp,hosts 等)
 
@@ -1206,7 +1206,7 @@ nova boot --flavor m1.tiny --image $(nova image-list|awk '/ CirrOS / { print $2 
 	serice network restart
 
 
-##网络拓扑
+## 网络拓扑
 
 ![include-cinder](/installation/images/include-cinder.png)
 
@@ -1271,9 +1271,9 @@ Add a filter entry to the devices section in the /etc/lvm/lvm.conf file to keep 
 	chkconfig openstack-cinder-volume on
 	chkconfig tgtd on
 
-##Swift 安装
+## Swift 安装
 
-###安装存储节点
+### 安装存储节点
 
 在执行下面的操作之前，当然别忘了需要安装公共部分内容哦!(比如ntp,hosts 等)
 
@@ -1329,7 +1329,7 @@ Add a filter entry to the devices section in the /etc/lvm/lvm.conf file to keep 
 
 	serice network restart
 
-##网络拓扑
+## 网络拓扑
 
 这里省去Cinder 节点部分
 
@@ -1386,7 +1386,7 @@ Create the swift recon cache directory and set its permissions:
 	mkdir -p /var/swift/recon
 	chown -R swift:swift /var/swift/recon
 
-###安装swift-proxy 服务
+### 安装swift-proxy 服务
 
 为swift 在Keystone 中创建一个用户
 
@@ -1524,7 +1524,7 @@ Create the swift recon cache directory and set its permissions:
 	swift download myfiles
 
 
-##扩展一个新的swift storage 节点
+## 扩展一个新的swift storage 节点
 
 
 在开始配置之前，为Swift0 创建一个新磁盘，用于Swift 数据的存储，比如：
